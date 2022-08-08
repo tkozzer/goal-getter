@@ -66,20 +66,76 @@ U12. As a user, I want to share my goals with friends/family, so that I can hold
 
 This initial iteration will provide the minimum viable product (MVP) including creating, retrieving, updating, and deleting an account, as well as creating, retrieving, updating, and deleting a goal. Furthurmore, a user will also be able to get timely encouraging reminders to help motivate them to achieve their goals.
 
-We will use API Gateway and Lambda to create the endpoints need to accomplish all the tasks to have a functioning application as layed out above. These endpoints include:
+We will use API Gateway and Lambda to create the endpoints needed to accomplish all the tasks to have a functioning application as layed out above. These endpoints include:
 
-- CreateUser
-- GetUser
-- UpdateUser
-- DeleteUser
-- CreateGoal
-- GetGoal
-- UpdateGoal
-- DeleteGoal
-- CreateReminder
-- SendReminder
-- UpdateReminder
-- DeleteReminder
+|             |              |                  |
+|:------------|:-------------|:-----------------|
+| `CreateUser`| `CreateGoal` | `CreateReminder` |
+| `GetUser`   | `GetGoal`    | `SendReminder`   |
+| `UpdateUser`| `UpdateGoal` | `UpdateReminder` |
+| `DeleteUser`| `DeleteGoal` | `DeleteReminder` |
+
+We will store all data in a DynamoDb tables which will include `'user'` and `'goal'`, and `'reminder`'. **Goal Getters** will also provide a web application to allow users to manager their account. A main page will provide them with all their goals and will give them the ability to create, update, or delete any of their current goals.
+
+## 6. API
+
+<div class="move2">
+    <h3>6.1 Public Models</h3>
+<pre>
+    // User
+    String userId;
+    String firstName;
+    String lastName;
+    String email;
+    String phoneNumber;
+    String birthDate;
+    String dateAccountCreated;
+    List< UpdateLog > changeLog;
+    boolean canReceiveTexts;
+    boolean isVerified;
+</pre>
+<pre>
+    // Goal
+    String goalId;
+    String userId;
+    String typeOfGoal;
+    String description;
+    String dateCreated;
+    String dateToBeAchievedBy;
+    String dateAchievedBy;
+    List< GoalStep > goalSteps;
+    boolean remindersOn;
+    boolean goalFinished;
+    int priority;
+    int goalDifficulty;
+</pre>
+<pre>
+    // GoalStep
+    String goalStepId;
+    String goalId;
+    String userId;
+    String stepDescription;
+    String dateCreated;
+    String dateToBeAchievedBy;
+    String dateAchievedBy;
+    int stepDifficulty;
+    boolean canSendReminders;
+    boolean isGoalStepFinished;
+</pre>
+<pre>
+    // Reminder
+    String reminderId;
+    String reminderType; // i.e. Goal, GoalStep, or other
+    String goalId;
+    String goalStepId;
+    String userId;
+    String message;
+    boolean canSendText;
+    boolean canSendEmail;
+    String dateReminderSent;
+    boolean requiresUserFeedback; // If it this reminder needs input from user (i.e. goal/step will expire)
+</pre>
+</div>
 
 <style>
     .move2 {
