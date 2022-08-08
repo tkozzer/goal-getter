@@ -1,0 +1,15 @@
+@startuml UpdateUser_SD
+
+skinparam SequenceMessageAlignment center
+actor Client as cl
+participant "Account Information webpage" as caw
+participant "UpdateUser Lambda" as cul
+database user 
+
+cl -> caw : submit data to update user account
+caw -> cul : send update user request
+cul -> user : update account information
+cul -> caw : return user's data
+caw -> cl : display user's data
+
+@enduml

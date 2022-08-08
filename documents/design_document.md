@@ -34,7 +34,7 @@ U7. As a user, I want to edit a goal, so if I make a mistake or something change
 
 U8. As a user, I want to create markers/steps for each goal, so that I can break down a goal further down into smaller achievable steps.
 
-U9. As a user, I want to update a goal marker, so that as I achieve steps of my goal I can check those off and see the progress.
+U9. As a user, I want to update a goal marker/step, so that as I achieve steps of my goal I can check those off and see the progress.
 
 U10. As a user, I want to delete a goal, so that if I no longer want to have a certain goal I can remove it from my goals to achieve.
 
@@ -68,12 +68,12 @@ This initial iteration will provide the minimum viable product (MVP) including c
 
 We will use API Gateway and Lambda to create the endpoints needed to accomplish all the tasks to have a functioning application as layed out above. These endpoints include:
 
-|             |              |                  |
-|:------------|:-------------|:-----------------|
-| `CreateUser`| `CreateGoal` | `CreateReminder` |
-| `GetUser`   | `GetGoal`    | `SendReminder`   |
-| `UpdateUser`| `UpdateGoal` | `UpdateReminder` |
-| `DeleteUser`| `DeleteGoal` | `DeleteReminder` |
+|             |              |
+|:------------|:-------------|
+| `CreateUser`| `CreateGoal` |
+| `GetUser`   | `GetGoal`    |
+| `UpdateUser`| `UpdateGoal` |
+| `DeleteUser`| `DeleteGoal` |
 
 We will store all data in a DynamoDb tables which will include `'user'` and `'goal'`, and `'reminder`'. **Goal Getter** will also provide a web application to allow users to manager their account. A main page will provide them with all their goals and will give them the ability to create, update, or delete any of their current goals.
 
@@ -84,15 +84,18 @@ We will store all data in a DynamoDb tables which will include `'user'` and `'go
 <pre>
     // User
     String userId;
-    String firstName;
-    String lastName;
+    String username;
+    String hashedPassword;
+    String salt;
     String email;
     String phoneNumber;
     String birthDate;
     String dateAccountCreated;
     List< UpdateLog > changeLog;
-    boolean canReceiveTexts;
-    boolean isVerified;
+    List< String > ipAddresses;
+    Boolean canReceiveTexts;
+    Boolean isVerified;
+    List< String > goalIds;
 </pre>
 <pre>
     // Goal
@@ -104,10 +107,10 @@ We will store all data in a DynamoDb tables which will include `'user'` and `'go
     String dateToBeAchievedBy;
     String dateAchievedBy;
     List< GoalStep > goalSteps;
-    boolean remindersOn;
-    boolean goalFinished;
-    int priority;
-    int goalDifficulty;
+    Boolean remindersOn;
+    Boolean goalFinished;
+    Integer priority;
+    Integer goalDifficulty;
 </pre>
 <pre>
     // GoalStep
@@ -118,9 +121,9 @@ We will store all data in a DynamoDb tables which will include `'user'` and `'go
     String dateCreated;
     String dateToBeAchievedBy;
     String dateAchievedBy;
-    int stepDifficulty;
-    boolean canSendReminders;
-    boolean isGoalStepFinished;
+    Integer stepDifficulty;
+    Boolean canSendReminders;
+    Boolean isGoalStepFinished;
 </pre>
 <pre>
     // Reminder
@@ -130,11 +133,101 @@ We will store all data in a DynamoDb tables which will include `'user'` and `'go
     String goalStepId;
     String userId;
     String message;
-    boolean canSendText;
-    boolean canSendEmail;
+    Boolean canSendText;
+    Boolean canSendEmail;
+    String dateToSendReminder;
     String dateReminderSent;
-    boolean requiresUserFeedback; // If it this reminder needs input from user (i.e. goal/step will expire)
+    Boolean requiresUserFeedback; // If it this reminder needs input from user (i.e. goal/step will expire)
 </pre>
+<pre> 
+    // UpdateLog
+    String updateLogId;
+    String userId;
+    String dateOfUpdate;
+    String previousState;
+    String newState;
+</pre>
+    <h3>6.2 Create User Endpoint</h3>
+    <div class="move2">
+        - Accepts <code>POST</code> requests to <code>/users</code></br>
+        - Accepts data to create a new account with a provided email address, username, and password. </br>
+          &nbsp;&nbsp;&nbsp;&nbsp;Returns a new user account with a unique userId assigned by <strong>Goal Getter</strong>.</br>
+        - Each data input sent will be validated to make sure that no malformed data is being sent. If any data is deemed to be </br>
+        &nbsp;&nbsp;&nbsp;&nbsp;malformed, then a <code>InvalidAttributeValueException</code> will be thrown.
+    </div>
+    <img src="images/CreateUser_SD.png">
+    </br>
+    <h3>6.3 Get User Endpoint</h3>
+    <div class="move2">
+        - Accepts <code>GET</code> requests to <code>/users/:userId</code></br>
+        - Accepts a userId and returns the data corresponding to that user. </br>
+        - If the given userId is not found, then a <code>UserNotFoundException</code> will be thrown.
+    </div>
+    <img src="images/GetUser_SD.png">
+    </br>
+    <h3>6.4 Update User Endpoint</h3>
+    <div class="move2">
+        - Accepts <code>PUT</code> requests to <code>/users/:userId/update</code></br>
+        - Accepts data to update/edit a user account with optional data inputs (i.e. dateOfBirth, phoneNumber, etc) </br>
+        &nbsp;&nbsp;&nbsp;&nbsp;and returns the updated user account.</br>
+        - Each data input sent will be validated to make sure that no malformed data is being sent. If any data is deemed to be </br>
+        &nbsp;&nbsp;&nbsp;&nbsp;malformed, then a <code>InvalidAttributeValueException</code> will be thrown.
+    </div>
+    <img src="images/UpdateUser_SD.png">
+    </br>
+    <h3>6.5 Delete User Endpoint</h3>
+    <div class="move2">
+        - Accepts <code>POST</code> requests to <code>/users/:userId/delete</code></br>
+        - Accepts a userId and returns a message of success if the user's account is deleted.</br>
+        - If the given userId is not found, then a <code>UserNotFoundException</code> will be thrown.
+    </div>
+    <img src="images/DeleteUser_SD.png">
+    </br>
+    <h3>6.6 Create Goal Endpoint</h3>
+    <div class="move2">
+        - Accepts <code>POST</code> requests to <code>/users/:userId/goals</code></br>
+        - Accepts a userId and data to create a new goal (See public models to see all data). </br>
+          &nbsp;&nbsp;&nbsp;&nbsp;Returns a new goal with a unique goalId assigned by <strong>Goal Getter</strong>.</br>
+        - Each data input sent will be validated to make sure that no malformed data is being sent. If any data is deemed to be </br>
+        &nbsp;&nbsp;&nbsp;&nbsp;malformed, then a <code>InvalidAttributeValueException</code> will be thrown.
+    </div>
+    <img src="images/CreateGoal_SD.png">
+    </br>
+    <h3>6.7 Get Goal Endpoint</h3>
+    <div class="move2">
+        - Accepts <code>GET</code> requests to <code>/users/:userId/goals/:goalId</code></br>
+        - Accepts a userId and goalId and returns the data corresponding to that goal. </br>
+        - If the given userId is not found, then a <code>UserNotFoundException</code> will be thrown.</br>
+        - If the given goalId is not found, then a <code>GoalNotFoundException</code> will be thrown.
+    </div>
+    <img src="images/GetGoal_SD.png">
+    </br>
+    <h3>6.8 Update Goal Endpoint</h3>
+    <div class="move2">
+        - Accepts <code>PUT</code> requests to <code>/users/:userId/goals/:goalId/update</code></br>
+        - Accepts data to update/edit a goal with optional data inputs (i.e. description, dateToBeAchieved, etc) </br>
+        &nbsp;&nbsp;&nbsp;&nbsp;and returns the updated goal.</br>
+        - Each data input sent will be validated to make sure that no malformed data is being sent. If any data is deemed to be </br>
+        &nbsp;&nbsp;&nbsp;&nbsp;malformed, then a <code>InvalidAttributeValueException</code> will be thrown.
+    </div>
+    <img src="images/UpdateGoal_SD.png">
+    </br>
+    <h3>6.9 Delete Goal Endpoint</h3>
+    <div class="move2">
+        - Accepts <code>POST</code> requests to <code>/users/:userId/goals/:goalId/delete</code></br>
+        - Accepts a goalId and userId and returns a message of success if the goal is deleted.</br>
+        - If the given userId is not found, then a <code>UserNotFoundException</code> will be thrown.</br>
+        - If the given goalId is not found, then a <code>GoalNotFoundException</code> will be thrown.
+    </div>
+    <img src="images/DeleteGoal_SD.png">
+    </br>
+    <h3>6.10 Get Goals Endpoint</h3>
+    <div class="move2">
+        - Accepts <code>GET</code> requests to <code>/users/:userId/goals</code></br>
+        - Accepts a userId and returns a list of all the user's goals. </br>
+        - If the given userId is not found, then a <code>UserNotFoundException</code> will be thrown.</br>
+    </div>
+    <img src="images/GetGoals_SD.png">
 </div>
 
 <style>

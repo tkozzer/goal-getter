@@ -1,0 +1,17 @@
+@startuml CreateGoal_SD
+
+skinparam SequenceMessageAlignment center
+actor Client as cl
+participant "User mainpage" as caw
+participant "CreateGoal Lambda" as cul
+database goal 
+database user
+
+cl -> caw : submit data to create a goal
+caw -> cul : send create goal request
+cul -> goal : save goal information
+cul -> user : add goalId to list of goalIds
+cul -> caw : return goal information
+caw -> cl : display goal information
+
+@enduml

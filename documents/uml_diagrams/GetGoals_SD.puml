@@ -1,0 +1,15 @@
+@startuml GetGoals_SD
+
+skinparam SequenceMessageAlignment center
+actor Client as cl
+participant "User mainpage" as caw
+participant "GetGoals Lambda" as cul
+database goal 
+
+cl -> caw : after login
+caw -> cul : send get goals request
+cul -> goal : get a list of goals
+cul -> caw : return goal list
+caw -> cl : display goal list
+
+@enduml

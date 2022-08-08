@@ -1,0 +1,15 @@
+@startuml GetUser_SD
+
+skinparam SequenceMessageAlignment center
+actor Client as cl
+participant "Login webpage" as caw
+participant "GetUser Lambda" as cul
+database user 
+
+cl -> caw : login to Goal Getter
+caw -> cul : send get user request
+cul -> user : get account information
+cul -> caw : return user's data
+caw -> cl : display user's data
+
+@enduml

@@ -1,0 +1,19 @@
+@startuml DeleteGoal_SD
+
+skinparam SequenceMessageAlignment center
+actor Client as cl
+participant "Goal webpage" as caw
+participant "DeleteGoal Lambda" as cul
+database goal 
+database user
+database reminder
+
+cl -> caw : select delete goal
+caw -> cul : send delete goal request
+cul -> goal : delete goal information
+cul -> user : delete goalId from list of goalIds
+cul -> reminder : delete reminders associated with goal
+cul -> caw : return user webpage
+caw -> cl : display current goals
+
+@enduml

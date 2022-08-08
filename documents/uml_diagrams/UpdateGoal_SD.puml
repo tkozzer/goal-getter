@@ -1,0 +1,15 @@
+@startuml UpdateGoal_SD
+
+skinparam SequenceMessageAlignment center
+actor Client as cl
+participant "Goal webpage" as caw
+participant "UpdateGoal Lambda" as cul
+database goal 
+
+cl -> caw : submit a request to update a goal
+caw -> cul : send update goal request
+cul -> goal : update goal information
+cul -> caw : return goal information
+caw -> cl : display goal information
+
+@enduml

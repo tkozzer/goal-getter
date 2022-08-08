@@ -1,0 +1,14 @@
+@startuml Create User Sequence Diagram
+
+skinparam SequenceMessageAlignment center
+actor Client as cl
+participant "Create Account webpage" as caw
+participant "CreateUser Lambda" as cul
+database user 
+
+cl -> caw : submit data to create an account
+caw -> cul : send create user request
+cul -> user : save account information
+cul -> caw : return userId
+
+@enduml

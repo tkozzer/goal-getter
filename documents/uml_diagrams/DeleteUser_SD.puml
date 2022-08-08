@@ -1,0 +1,19 @@
+@startuml DeleteUser_SD
+
+skinparam SequenceMessageAlignment center
+actor Client as cl
+participant "Account Information webpage" as caw
+participant "DeleteUser Lambda" as cul
+database user
+database goal
+database reminder 
+
+cl -> caw : submit desire to delete user account
+caw -> cul : send delete user request
+cul -> user : delete user account information
+cul -> goal : delete user goal information
+cul -> reminder : delete user reminder information
+cul -> caw : return message of success
+caw -> cl : logout user
+
+@enduml

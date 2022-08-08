@@ -1,2 +1,2 @@
 # goal-getter
-An service that will help you create and track your goals.
+A service that will help you create and track your goals.
