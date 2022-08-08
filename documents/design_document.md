@@ -1,8 +1,8 @@
-# Goal Getters
+# Goal Getter
 
 ## 1. Problem Statement  
 
-Some of the most successful people in the world set goals and usually their success depends on how well they can achieve those goals. **Goal Getters** is an application that will help people keep track of their goals and give them timely reminders to encourage them to keep working towards achieving those goals. Most of us want to be successful in life in whatever way we define that for our life, and **Goal Getters** will help each person achieve success through these core features:
+Some of the most successful people in the world set goals and usually their success depends on how well they can achieve those goals. **Goal Getter** is an application that will help people keep track of their goals and give them timely reminders to encourage them to keep working towards achieving those goals. Most of us want to be successful in life in whatever way we define that for our life, and **Goal Getter** will help each person achieve success through these core features:
 </br>
 
 1. The ability to set goals and track progress
@@ -12,7 +12,7 @@ Some of the most successful people in the world set goals and usually their succ
 5. Tips and resources to help accomplish goals
 </br>
 
-Only you can determine what you want to strive for, but once you figure out your goals and can identify the steps along the goal achievement path, then that's where **Goal Getters** comes in. We want to help you accomplish your goals and achieve success and become a Goal Getter!
+Only you can determine what you want to strive for, but once you figure out your goals and can identify the steps along the goal achievement path, then that's where **Goal Getter** comes in. We want to help you accomplish your goals and achieve success and become a Goal Getter!
 
 ## 2. Top Questions To Resolve in Review
 
@@ -75,7 +75,7 @@ We will use API Gateway and Lambda to create the endpoints needed to accomplish 
 | `UpdateUser`| `UpdateGoal` | `UpdateReminder` |
 | `DeleteUser`| `DeleteGoal` | `DeleteReminder` |
 
-We will store all data in a DynamoDb tables which will include `'user'` and `'goal'`, and `'reminder`'. **Goal Getters** will also provide a web application to allow users to manager their account. A main page will provide them with all their goals and will give them the ability to create, update, or delete any of their current goals.
+We will store all data in a DynamoDb tables which will include `'user'` and `'goal'`, and `'reminder`'. **Goal Getter** will also provide a web application to allow users to manager their account. A main page will provide them with all their goals and will give them the ability to create, update, or delete any of their current goals.
 
 ## 6. API
 
