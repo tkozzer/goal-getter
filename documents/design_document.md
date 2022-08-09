@@ -94,7 +94,8 @@ We will store all data in a DynamoDb tables which will include `'user'` and `'go
     List< UpdateLog > changeLog;
     List< String > ipAddresses;
     Boolean canReceiveTexts;
-    Boolean isVerified;
+    Boolean isEmailVerified;
+    Boolean isPhoneVerified;
     List< String > goalIds;
 </pre>
 <pre>
@@ -228,6 +229,57 @@ We will store all data in a DynamoDb tables which will include `'user'` and `'go
         - If the given userId is not found, then a <code>UserNotFoundException</code> will be thrown.</br>
     </div>
     <img src="images/GetGoals_SD.png">
+</div>
+</br>
+
+## 7. Tables
+<div class="move2">
+    <h3>7.1 <code>users</code></h3>
+<pre>
+    userId // partition key, string
+    userName // string
+    hashedPassword // string
+    salt // string
+    email // string
+    phoneNumber // string
+    birthData // string
+    dateAccountCreated // string
+    changeLog // list
+    ipAddresses // list
+    canReceiveTexts // boolean
+    isEmailVerified // boolean
+    isNumberVerified // boolean
+    goalIds // list
+</pre>
+    <h3>7.2 <code>goals</code></h3>
+<pre>
+    goalId // partition key, string
+    userId // string
+    typeOfGoal // string
+    description // string
+    dateCreated // string
+    dateToBeAchievedBy // string
+    dateAchievedBy // string
+    goalSteps // list
+    remindersOn // boolean
+    goalFinished // boolean
+    priority // number
+    goalDifficulty // number
+</pre>
+    <h3>7.3 <code>reminders</code></h3>
+<pre>
+    reminderId // partition key, string
+    reminderType // string
+    goalId // string
+    goalStepId // string
+    userId // string
+    message // string
+    canSendText // boolean
+    canSendEmail // boolean
+    dateToSendReminder // string
+    dateReminderSent // string
+    requiresUserFeedBack // boolean
+</pre>
 </div>
 
 <style>
